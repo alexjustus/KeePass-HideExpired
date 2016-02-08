@@ -92,6 +92,37 @@ namespace HideExpired
         private void OnUIStateUpdated(object sender, EventArgs e)
         {
             this.menuItem.Enabled = this.host.Database.IsOpen;
+
+            // Only take action if feature is enabled.
+            if (!this.isChecked || !this.menuItem.Enabled)
+                return;
+
+            // Get a reference to the list view of entries.
+            var listViewSearch = this.host.MainWindow.Controls.Find("m_lvEntries", true);
+            if (listViewSearch.Length == 0)
+                return;
+
+            var listView = listViewSearch[0] as ListView;
+            if (listView == null)
+                return;
+
+            DateTime now = DateTime.UtcNow;
+            listView.BeginUpdate();
+
+            // Remove any expired items from the list.
+            for (int i = listView.Items.Count - 1; i >= 0; i--)
+            {
+                var listViewItem = listView.Items[i];
+                var listItem = listViewItem.Tag as PwListItem;
+                var entry = listItem.Entry;
+
+                if (entry.Expires && (entry.ExpiryTime <= now))
+                {
+                    listView.Items[i].Remove();
+                }
+            }
+
+            listView.EndUpdate();
         }
     }
 }
