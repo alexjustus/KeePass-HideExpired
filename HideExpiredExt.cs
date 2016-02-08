@@ -27,6 +27,7 @@ namespace HideExpired
         public override bool Initialize(IPluginHost host)
         {
             this.host = host;
+            this.host.MainWindow.UIStateUpdated += this.OnUIStateUpdated;
 
             // Get a reference to the 'Edit' menu item container.
             var menuSearch = this.host.MainWindow.MainMenu.Items.Find("m_menuEdit", false);
@@ -54,6 +55,7 @@ namespace HideExpired
             // Add new menu entry after the 'Show Expired' item.
             this.menuItem = new ToolStripMenuItem();
             this.menuItem.Text = "Hide Expired Entries";
+            this.menuItem.Enabled = false;
             this.menuItem.Click += this.OnMenuHideExpired;
             editMenu.DropDownItems.Insert(index + 1, this.menuItem);
 
@@ -67,6 +69,7 @@ namespace HideExpired
         {
             // Remove our event handlers.
             this.menuItem.Click -= this.OnMenuHideExpired;
+            this.host.MainWindow.UIStateUpdated -= this.OnUIStateUpdated;
         }
 
         /// <summary>
@@ -81,6 +84,14 @@ namespace HideExpired
 
             UIUtil.SetChecked(this.menuItem, isChecked);
             this.host.MainWindow.UpdateUI(false, null, false, null, true, null, false);
+        }
+
+        /// <summary>
+        /// Occurs when the UI state is updated.
+        /// </summary>
+        private void OnUIStateUpdated(object sender, EventArgs e)
+        {
+            this.menuItem.Enabled = this.host.Database.IsOpen;
         }
     }
 }
