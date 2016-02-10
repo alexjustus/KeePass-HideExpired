@@ -18,7 +18,9 @@ namespace HideExpired
     {
         private IPluginHost host;
         private ToolStripMenuItem menuItem;
-        private bool isChecked = false;
+        private bool isChecked;
+
+        private const string ConfigId = "HideExpiredEnabled";
 
         /// <summary>
         /// Initializes the plugin.
@@ -28,6 +30,7 @@ namespace HideExpired
         {
             this.host = host;
             this.host.MainWindow.UIStateUpdated += this.OnUIStateUpdated;
+            this.isChecked = this.host.CustomConfig.GetBool(ConfigId, false);
 
             // Get a reference to the 'Edit' menu item container.
             var menuSearch = this.host.MainWindow.MainMenu.Items.Find("m_menuEdit", false);
@@ -57,6 +60,7 @@ namespace HideExpired
             this.menuItem.Text = "Hide Expired Entries";
             this.menuItem.Enabled = false;
             this.menuItem.Click += this.OnMenuHideExpired;
+            UIUtil.SetChecked(this.menuItem, this.isChecked);
             editMenu.DropDownItems.Insert(index + 1, this.menuItem);
 
             return true;
@@ -82,8 +86,12 @@ namespace HideExpired
             else
                 this.isChecked = true;
 
+            // Update UI.
             UIUtil.SetChecked(this.menuItem, isChecked);
             this.host.MainWindow.UpdateUI(false, null, false, null, true, null, false);
+
+            // Save config.
+            this.host.CustomConfig.SetBool(ConfigId, isChecked);
         }
 
         /// <summary>
