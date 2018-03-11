@@ -60,6 +60,11 @@ namespace HideExpired
         /// </summary>
         public override void Terminate()
         {
+            if (this.menuItem == null)
+            {
+                return;
+            }
+
             // Remove our event handlers.
             this.menuItem.Click -= this.OnMenuHideExpired;
             this.host.MainWindow.UIStateUpdated -= this.OnUIStateUpdated;
@@ -70,6 +75,11 @@ namespace HideExpired
         /// </summary>
         private void OnMenuHideExpired(object sender, EventArgs e)
         {
+            if (this.menuItem == null)
+            {
+                return;
+            }
+
             if (this.isChecked)
                 this.isChecked = false;
             else
@@ -88,6 +98,11 @@ namespace HideExpired
         /// </summary>
         private void OnUIStateUpdated(object sender, EventArgs e)
         {
+            if (this.menuItem == null)
+            {
+                return;
+            }
+
             this.menuItem.Enabled = this.host.Database.IsOpen;
 
             // Only take action if feature is enabled.
