@@ -41,21 +41,10 @@ namespace HideExpired
             if (editMenu == null)
                 return false;
 
-            // Find the 'Show All Expired Entries' item.
-            var index = -1;
-            for (int i = 0; i < editMenu.DropDownItems.Count - 1; i++)
-            {
-                if (editMenu.DropDownItems[i].Name.Equals("m_menuEditShowExpired", StringComparison.OrdinalIgnoreCase))
-                {
-                    index = i;
-                    break;
-                }
-            }
+            // Find the index of the 'Show Entries by Tag' item.
+            var index = editMenu.DropDownItems.IndexOfKey("m_menuEditShowByTag");
 
-            if (index < 0)
-                return false;
-
-            // Add new menu entry after the 'Show Expired' item.
+            // Add new menu entry after the 'Show Entries by Tag' item.
             this.menuItem = new ToolStripMenuItem();
             this.menuItem.Text = "Hide Expired Entries";
             this.menuItem.Enabled = false;
